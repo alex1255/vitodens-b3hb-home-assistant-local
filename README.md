@@ -4,6 +4,34 @@ Lokale Home-Assistant-Anbindung einer Viessmann Vitodens 300-W B3HB über
 [optolink-splitter](https://github.com/philippoo66/optolink-splitter). Die
 ViCare-Verbindung kann über den Splitter parallel weiterlaufen.
 
+Lokale Viessmann-Heizungssteuerung mit Home Assistant, MQTT, Optolink,
+Vitoconnect und grafischen Lovelace-Karten. Ausgelegt für die Vitodens 300-W
+B3HB mit der Gerätekategorie `VScotHO1_72` und dem VS2/P300-Protokoll.
+
+## Besonderheiten
+
+### Zeitprofile statt täglicher Einzelprogrammierung
+
+Für Heizkreis 1, Warmwasserbereitung und Zirkulation lassen sich getrennte
+Wochenprofile speichern. Ein vorbereiteter **Werktag** oder **Ruhetag** kann
+anschließend mit einem Klick einem beliebigen Wochentag zugewiesen werden. Die
+grafische 24-Stunden-Ansicht zeigt direkt, welches Profil und welche Zeitfenster
+in der Heizung aktiv sind.
+
+### Warmwasser-Schnellstart mit Rückkehr zum Zeitprogramm
+
+Die Warmwasserbereitung kann außerhalb des regulären Zeitprogramms für 30 oder
+60 Minuten gestartet werden. Danach stellt der Dienst das zuvor gesicherte
+Zeitprogramm wieder her. Home Assistant zeigt dabei getrennt an, ob gerade ein
+Warmwasser-Zeitfenster gilt und ob die Speicherladung tatsächlich aktiv ist.
+
+## Dashboard
+
+Die Bedienoberfläche umfasst eine kompakte Anlagensteuerung, eine grafische
+Heizkennlinie, Livewerte, Wochenübersichten und einen eigenen Profileditor.
+Aktuelle, anonymisierte Screenshots werden in
+[docs/screenshots.md](docs/screenshots.md) ergänzt.
+
 Das Projekt ergänzt den Splitter um:
 
 - MQTT Discovery für Messwerte, Betriebszustände und Zeitprogramme
@@ -107,4 +135,3 @@ Hand einer Fachkraft.
 Der zugrunde liegende `optolink-splitter` steht unter GPL-3.0. Diese Erweiterung
 wird deshalb ebenfalls unter GPL-3.0-or-later veröffentlicht. Viessmann,
 Vitodens, Vitoconnect und ViCare sind Marken ihrer jeweiligen Inhaber.
-
