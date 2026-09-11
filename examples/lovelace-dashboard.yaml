@@ -1,3 +1,6 @@
+# Vollstaendige anonymisierte Lovelace-Konfiguration fuer ein neues Dashboard.
+# Bei einem anderen URL-Pfad muessen editorPath und overviewPath angepasst werden.
+title: Vitodens Lokal
 views:
   - title: Kontrolle
     path: kontrolle
@@ -102,4 +105,3 @@ views:
             title: Profile bearbeiten
             overviewPath: /vitodens-lokal/zeitprogramme
             grid_options: {columns: full, rows: auto}
-

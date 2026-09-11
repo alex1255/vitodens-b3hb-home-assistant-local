@@ -10,6 +10,10 @@ B3HB mit der Gerätekategorie `VScotHO1_72` und dem VS2/P300-Protokoll.
 
 ![Lokale Vitodens-Steuerung in Home Assistant](docs/images/dashboard-control.png)
 
+Die vollständige, anonymisierte Konfiguration aller drei Ansichten steht unter
+[examples/lovelace-dashboard.yaml](examples/lovelace-dashboard.yaml). Sie
+verwendet ausschließlich die durch dieses Projekt angelegten MQTT-Entitäten.
+
 ## Besonderheiten
 
 ### Zeitprofile statt täglicher Einzelprogrammierung
