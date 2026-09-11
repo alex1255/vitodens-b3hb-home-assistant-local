@@ -111,6 +111,13 @@ views:
     type: sections
     icon: mdi:bookmark-box-multiple
     max_columns: 2
+    badges:
+      - type: entity
+        entity: sensor.vitodens_letztes_optolink_backup
+        name: Raspberry Optolink-Backup · /config/optolink-backup
+        show_name: true
+        show_state: true
+        show_icon: true
     sections:
       - type: grid
         column_span: 2

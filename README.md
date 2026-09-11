@@ -46,6 +46,7 @@ Das Projekt ergänzt den Splitter um:
 - grafische Home-Assistant-Karten für Regelung, Heizkennlinie und Zeitpläne
 - Auswertung des Viessmann-Fehlerspeichers mit Klartext und Zeitstempel
 - Beispielautomation für Push-Benachrichtigungen bei neuen Störungen
+- tägliches Raspberry-Backup in ein Home-Assistant-Vollbackup
 - systemd-Dienst mit automatischem Neustart
 
 ## Zusatzfunktionen auf dem Raspberry Pi
@@ -140,6 +141,8 @@ Schreibvorgänge und die Profilverwaltung.
 8. Optional die Push-Automation aus
    [examples/fault-notification-automation.yaml](examples/fault-notification-automation.yaml)
    importieren und den Benachrichtigungsdienst anpassen.
+9. Optional das automatische Raspberry-Backup nach
+   [docs/backup.md](docs/backup.md) einrichten.
 
 Die ausführliche Reihenfolge, Prüfungen und Rückfallmöglichkeiten stehen in
 [docs/installation.md](docs/installation.md).
@@ -151,6 +154,9 @@ Die ausführliche Reihenfolge, Prüfungen und Rückfallmöglichkeiten stehen in
 | `homeassistant_poll_list.py` | Datenpunkte und MQTT-Discovery-Metadaten |
 | `vitodens_ww_actions.py` | Bedienelemente, Profile, Fehlerspeicher und MQTT-Logik |
 | `vitodens_ww_actions.service` | systemd-Dienst |
+| `optolink-backup.sh` | Bereinigtes Raspberry-Archiv für Home Assistant |
+| `optolink-backup-status.py` | MQTT-Status des letzten erfolgreichen Backups |
+| `optolink-backup.service` / `.timer` | Tägliche, nachholende Sicherung per systemd |
 | `vitodens-heating-control-card.js` | HK1-Regler und Heizkennlinie |
 | `vitodens-schedule-bars-card.js` | Wochenübersicht der Zeitprogramme |
 | `vitodens-profile-editor-card.js` | Editor für gespeicherte Zeitprofile |

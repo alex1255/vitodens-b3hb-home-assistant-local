@@ -1,0 +1,11 @@
+[Unit]
+Description=Tägliches Optolink-Backup
+
+[Timer]
+OnCalendar=*-*-* 03:30:00
+RandomizedDelaySec=30m
+Persistent=true
+Unit=optolink-backup.service
+
+[Install]
+WantedBy=timers.target
