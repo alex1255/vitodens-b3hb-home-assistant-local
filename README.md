@@ -44,6 +44,49 @@ Das Projekt ergänzt den Splitter um:
 - Beispielautomation für Push-Benachrichtigungen bei neuen Störungen
 - systemd-Dienst mit automatischem Neustart
 
+## Zusatzfunktionen auf dem Raspberry Pi
+
+Neben dem eigentlichen `optolink-splitter` läuft auf dem Raspberry Pi der
+zusätzliche Python-Dienst `vitodens_ww_actions.py`. Er bildet die Logik ab, die
+weder die Viessmann-Regelung noch Home Assistant von sich aus bereitstellen:
+
+- Speicherung und Bearbeitung der Profile **Werktag** und **Schaukelstuhl**
+- getrennte Profilzuordnung für Heizkreis 1, Warmwasser und Zirkulation
+- Anwendung eines Profils auf einzelne Wochentage
+- Validierung, Schreiben und anschließendes Zurücklesen der Zeitprogramme
+- Warmwasser-Schnellstart für 30 oder 60 Minuten
+- Sicherung und Wiederherstellung des vorherigen Warmwasser-Zeitprogramms
+- Bedienung von Betriebsart, Solltemperaturen, Spar- und Partybetrieb
+- Bedienung von Neigung und Niveau der Heizkennlinie
+- Auswertung des Viessmann-Fehlerspeichers mit Klartext und Zeitstempel
+- Veröffentlichung zusätzlicher Sensoren und Bedienelemente über MQTT Discovery
+- lokale Zustandsdateien für Profile und laufende Warmwasseraktionen
+
+### Datenfluss
+
+```text
+Home-Assistant-Karte
+        |
+        | MQTT-Befehl
+        v
+vitodens_ww_actions.py auf dem Raspberry Pi
+        |
+        | lokale TCP-Anfrage
+        v
+optolink-splitter ---- Optolink ---- Vitodens
+        |
+        | MQTT-Zustand und MQTT Discovery
+        v
+Home Assistant
+```
+
+Home Assistant sendet Bedienaktionen über eigene MQTT-Befehlsthemen an den
+Zusatzdienst. Der Dienst setzt sie in geprüfte Lese- und Schreibbefehle für die
+lokale TCP-Schnittstelle des Splitters um. Bestätigte Werte, Aktionsstatus,
+Profile und Fehlermeldungen werden anschließend wieder über MQTT veröffentlicht.
+Der Dienst wird durch systemd gestartet und bei einem Fehler automatisch neu
+gestartet.
+
 ## Stand und Kompatibilität
 
 Getestet wurde die Konfiguration mit:
