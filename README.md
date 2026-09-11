@@ -132,6 +132,13 @@ Hand einer Fachkraft.
 
 ## Lizenz und Herkunft
 
-Der zugrunde liegende `optolink-splitter` steht unter GPL-3.0. Diese Erweiterung
-wird deshalb ebenfalls unter GPL-3.0-or-later veröffentlicht. Viessmann,
-Vitodens, Vitoconnect und ViCare sind Marken ihrer jeweiligen Inhaber.
+Dieses Projekt baut auf dem von
+[Phil (`philippoo66`)](https://github.com/philippoo66) entwickelten
+[optolink-splitter](https://github.com/philippoo66/optolink-splitter) auf. Ein
+ausdrücklicher Dank gilt Phil für seine umfangreiche Arbeit und dafür, die
+lokale Anbindung von Viessmann-Heizungen bei gleichzeitigem Weiterbetrieb von
+Vitoconnect und ViCare möglich gemacht zu haben.
+
+Der `optolink-splitter` steht unter GPL-3.0. Diese Erweiterung wird deshalb
+ebenfalls unter GPL-3.0-or-later veröffentlicht. Viessmann, Vitodens,
+Vitoconnect und ViCare sind Marken ihrer jeweiligen Inhaber.
