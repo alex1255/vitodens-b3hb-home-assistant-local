@@ -36,10 +36,11 @@ Zeitprogramm-Ansicht schreibt es auf ausgewählte Tage der Heizung.
 
 ## Fehlermeldungen
 
-Die Störungserkennung arbeitet zweistufig. Das Sammelstörungsbit im
-Relaisstatus `0xA152` meldet eine aktive Störung unmittelbar. Dadurch kann Home
-Assistant sofort eine Push-Nachricht senden, auch wenn die Fehlerhistorie noch
-keinen neuen Eintrag enthält.
+Die Störungserkennung kombiniert drei Quellen. Das Sammelstörungsbit im
+Relaisstatus `0xA152` meldet einen neuen, noch nicht quittierten Alarm
+unmittelbar. Der aktuelle `nvoAlarm`-Block an `0xA132` liefert zusätzlich
+Zeitstempel, gestörten Teilnehmer und Fehlercode. Dadurch kann Home Assistant
+zum Beispiel `Störung Teilnehmer 99` statt nur einer allgemeinen Meldung senden.
 
 Der erste Eintrag der Viessmann-Fehlerhistorie an `0x7507` wird zusätzlich
 zyklisch gelesen. Der neun Byte lange Datensatz enthält Fehlercode und
@@ -50,3 +51,8 @@ Zeitstempel erzeugt auch bei identischem Fehlercode ein neues Ereignis.
 Code `00` bedeutet keine Störung und löst keine Push-Nachricht aus. Unbekannte
 Codes werden mit ihrem Hex-Code angezeigt, damit sie anhand der Serviceunterlage
 des konkreten Geräts geprüft werden können.
+
+Eine Quittierung kann das Sammelstörungsbit löschen, obwohl das Warndreieck am
+Regler noch sichtbar ist. Quittiert ist deshalb nicht gleichbedeutend mit
+behoben; maßgeblich bleibt die Anzeige am Gerät, bis ein belastbarer Datenpunkt
+für diesen gespeicherten Anzeigezustand identifiziert ist.

@@ -34,6 +34,7 @@ EDITOR_COMMAND_BASE = f"{ACTION_BASE}/zeitprogramm_editor"
 PROFILE_MATRIX_STATE_TOPIC = f"{EDITOR_BASE}/profile_matrix/state"
 PROFILE_MATRIX_ATTR_TOPIC = f"{EDITOR_BASE}/profile_matrix/attributes"
 FAULT_RAW_TOPIC = f"{MQTT_BASE}/letzte_stoerung_roh"
+ALARM_RAW_TOPIC = f"{MQTT_BASE}/alarmstatus_roh"
 RELAY_STATUS_TOPIC = f"{MQTT_BASE}/status"
 FAULT_STATE_TOPIC = f"{MQTT_BASE}/stoerung_aktuell"
 FAULT_ATTR_TOPIC = f"{MQTT_BASE}/stoerung_aktuell/attributes"
@@ -305,6 +306,7 @@ schedule_cache: dict[str, dict[str, str]] = {
 last_speicherladepumpe = "0"
 collective_fault_active = False
 last_fault_raw = ""
+current_alarm = None
 state_lock = threading.Lock()
 restore_timer: threading.Timer | None = None
 mqtt_client: paho.Client | None = None
@@ -2620,6 +2622,9 @@ def decode_fault_history(raw: str) -> tuple[str, dict, bool]:
 
 def publish_fault_state(client: paho.Client, raw: str) -> None:
     state, attributes, active = decode_fault_history(raw)
+    if current_alarm:
+        state, attributes = current_alarm
+        active = True
     if collective_fault_active and not active:
         state = "Sammelstörung aktiv · Details am Gerät"
         attributes = {
@@ -2632,6 +2637,46 @@ def publish_fault_state(client: paho.Client, raw: str) -> None:
     client.publish(FAULT_ACTIVE_TOPIC, "ON" if active else "OFF", retain=True)
     client.publish(FAULT_ATTR_TOPIC, json.dumps(attributes, ensure_ascii=False), retain=True)
     client.publish(FAULT_STATE_TOPIC, state, retain=True)
+
+
+def decode_alarm_status(raw: str) -> tuple[str, dict] | None:
+    """Decode VScot nvoAlarm (0xA132), including the disturbed participant."""
+    cleaned = "".join(raw.split()).lower()
+    try:
+        data = bytes.fromhex(cleaned)
+        if len(data) != 29:
+            raise ValueError("unexpected length")
+        participant = data[27]
+        code = data[28]
+        if participant == 0 and code == 0:
+            return None
+        year = int.from_bytes(data[16:18], "little")
+        timestamp = (
+            f"{data[19]:02d}.{data[18]:02d}.{year:04d} "
+            f"{data[20]:02d}:{data[21]:02d}:{data[22]:02d}"
+        )
+        description = (
+            f"Störung Teilnehmer {participant}"
+            if participant
+            else FAULT_CODES.get(code, "Unbekannter Viessmann-Fehlercode")
+        )
+        state = description if code == 0 else f"{description} · Code {code:02X}"
+        return state, {
+            "code": f"{code:02X}" if code else "--",
+            "beschreibung": description,
+            "teilnehmer": participant or None,
+            "zeitpunkt": timestamp,
+            "rohwert": cleaned,
+        }
+    except (ValueError, IndexError):
+        return None
+
+
+def publish_alarm_status(client: paho.Client, raw: str) -> None:
+    global current_alarm
+    current_alarm = decode_alarm_status(raw)
+    if last_fault_raw:
+        publish_fault_state(client, last_fault_raw)
 
 
 def decode_collective_fault(payload: str) -> bool:
@@ -2685,6 +2730,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
         f"{MQTT_BASE}/m1_betriebsart_roh",
         f"{MQTT_BASE}/speicherladepumpe",
         RELAY_STATUS_TOPIC,
+        ALARM_RAW_TOPIC,
         FAULT_RAW_TOPIC,
         SPAR_STATE_TOPIC,
         PARTY_STATE_TOPIC,
@@ -2718,6 +2764,10 @@ def on_message(client, userdata, msg):
 
     if topic == RELAY_STATUS_TOPIC:
         publish_collective_fault_state(client, payload)
+        return
+
+    if topic == ALARM_RAW_TOPIC:
+        publish_alarm_status(client, payload)
         return
 
     if topic == FAULT_RAW_TOPIC:

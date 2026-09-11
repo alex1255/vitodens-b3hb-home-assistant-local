@@ -12,12 +12,16 @@ actions:
     data:
       title: Stoerung an der Vitodens
       message: >-
-        Code {{ state_attr('sensor.vitodens_stoerung_aktuell', 'code') or '--' }}:
-        {{ state_attr('sensor.vitodens_stoerung_aktuell', 'beschreibung') }}
+        {{ state_attr('sensor.vitodens_stoerung_aktuell', 'beschreibung')
+           or states('sensor.vitodens_stoerung_aktuell') }}.
+        {% if state_attr('sensor.vitodens_stoerung_aktuell', 'code') not in [none, '', '--', '00'] %}
+        Fehlercode: {{ state_attr('sensor.vitodens_stoerung_aktuell', 'code') }}.
+        {% endif %}
         {% if state_attr('sensor.vitodens_stoerung_aktuell', 'zeitpunkt') %}
         Zeitpunkt der Heizung: {{ state_attr('sensor.vitodens_stoerung_aktuell', 'zeitpunkt') }}
         {% endif %}
       data:
         url: /vitodens-lokal/kontrolle
+        clickAction: /vitodens-lokal/kontrolle
 mode: queued
 max: 10

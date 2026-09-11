@@ -52,6 +52,7 @@ poll_list = {
                 ("OFTEN", "pumpenleistung", 0x0A3C, 1, 1, False),
                 ("OFTEN", "volumenstrom", 0x0C24, 2, 1, False),
                 ("OFTEN", "status", 0xA152, 2, 1, False),
+                ("OFTEN", "alarmstatus_roh", 0xA132, 29, "raw", False),
                 ("OFTEN", "betriebsart_2301_roh", 0x2301, 1, 1, True),
                 ("OFTEN", "betriebsart_3323_roh", 0x3323, 1, 1, True),
                 ("OFTEN", "m1_betriebsart_roh", 0x2323, 1, 1, False),

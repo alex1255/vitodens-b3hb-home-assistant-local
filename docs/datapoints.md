@@ -24,7 +24,8 @@ werden.
 | HK1-Zeitprogramm Montag | `0x2000` | 8 | vier Zeitfenster |
 | Warmwasser Montag | `0x2100` | 8 | vier Zeitfenster |
 | Zirkulation Montag | `0x2200` | 8 | vier Zeitfenster |
-| Sammelstörung | `0xA152` | 2 | Byte 0, Bit `0x01` |
+| Aktueller Alarm (`nvoAlarm`) | `0xA132` | 29 | Zeitstempel, gestörter Teilnehmer und Fehlercode |
+| Sammelstörung | `0xA152` | 2 | Byte 0, Bit `0x01`; neuer/unquittierter Alarm |
 | Fehlerhistorie, neuester Eintrag | `0x7507` | 9 | Code und Zeitstempel |
 
 Die folgenden Wochentage liegen jeweils im Abstand von acht Byte. Dadurch

@@ -26,6 +26,20 @@ views:
     sections:
       - type: grid
         column_span: 3
+        visibility:
+          - condition: state
+            entity: binary_sensor.vitodens_stoerung_aktiv
+            state: "on"
+        cards:
+          - type: tile
+            entity: sensor.vitodens_stoerung_aktuell
+            name: STÖRUNG AN DER HEIZUNG
+            color: red
+            icon: mdi:alert-octagon
+            vertical: false
+            grid_options: {columns: full, rows: 2}
+      - type: grid
+        column_span: 3
         cards:
           - type: heading
             heading: Warmwasser schnell starten
