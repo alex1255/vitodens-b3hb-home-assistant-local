@@ -34,6 +34,7 @@ EDITOR_COMMAND_BASE = f"{ACTION_BASE}/zeitprogramm_editor"
 PROFILE_MATRIX_STATE_TOPIC = f"{EDITOR_BASE}/profile_matrix/state"
 PROFILE_MATRIX_ATTR_TOPIC = f"{EDITOR_BASE}/profile_matrix/attributes"
 FAULT_RAW_TOPIC = f"{MQTT_BASE}/letzte_stoerung_roh"
+RELAY_STATUS_TOPIC = f"{MQTT_BASE}/status"
 FAULT_STATE_TOPIC = f"{MQTT_BASE}/stoerung_aktuell"
 FAULT_ATTR_TOPIC = f"{MQTT_BASE}/stoerung_aktuell/attributes"
 FAULT_ACTIVE_TOPIC = f"{MQTT_BASE}/stoerung_aktiv"
@@ -302,6 +303,8 @@ schedule_cache: dict[str, dict[str, str]] = {
     "hk1": {},
 }
 last_speicherladepumpe = "0"
+collective_fault_active = False
+last_fault_raw = ""
 state_lock = threading.Lock()
 restore_timer: threading.Timer | None = None
 mqtt_client: paho.Client | None = None
@@ -2617,9 +2620,48 @@ def decode_fault_history(raw: str) -> tuple[str, dict, bool]:
 
 def publish_fault_state(client: paho.Client, raw: str) -> None:
     state, attributes, active = decode_fault_history(raw)
+    if collective_fault_active and not active:
+        state = "Sammelstörung aktiv · Details am Gerät"
+        attributes = {
+            "code": "--",
+            "beschreibung": "Sammelstörung aktiv; Fehlerhistorie noch nicht aktualisiert",
+            "zeitpunkt": "",
+            "rohwert": raw,
+        }
+    active = active or collective_fault_active
     client.publish(FAULT_ACTIVE_TOPIC, "ON" if active else "OFF", retain=True)
     client.publish(FAULT_ATTR_TOPIC, json.dumps(attributes, ensure_ascii=False), retain=True)
     client.publish(FAULT_STATE_TOPIC, state, retain=True)
+
+
+def decode_collective_fault(payload: str) -> bool:
+    value = payload.strip().lower()
+    try:
+        return bool(int(float(value)) & 0x01)
+    except ValueError:
+        cleaned = "".join(value.split())
+        data = bytes.fromhex(cleaned)
+        if not data:
+            raise ValueError("empty relay status")
+        return bool(data[0] & 0x01)
+
+
+def publish_collective_fault_state(client: paho.Client, payload: str) -> None:
+    global collective_fault_active
+    collective_fault_active = decode_collective_fault(payload)
+    if last_fault_raw:
+        publish_fault_state(client, last_fault_raw)
+        return
+    client.publish(FAULT_ACTIVE_TOPIC, "ON" if collective_fault_active else "OFF", retain=True)
+    if collective_fault_active:
+        attributes = {
+            "code": "--",
+            "beschreibung": "Sammelstörung aktiv; Details am Gerät prüfen",
+            "zeitpunkt": "",
+            "rohwert": "",
+        }
+        client.publish(FAULT_ATTR_TOPIC, json.dumps(attributes, ensure_ascii=False), retain=True)
+        client.publish(FAULT_STATE_TOPIC, "Sammelstörung aktiv · Details am Gerät", retain=True)
 
 
 def on_connect(client, userdata, flags, reason_code, properties):
@@ -2642,6 +2684,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
     state_topics = [
         f"{MQTT_BASE}/m1_betriebsart_roh",
         f"{MQTT_BASE}/speicherladepumpe",
+        RELAY_STATUS_TOPIC,
         FAULT_RAW_TOPIC,
         SPAR_STATE_TOPIC,
         PARTY_STATE_TOPIC,
@@ -2656,7 +2699,7 @@ def on_connect(client, userdata, flags, reason_code, properties):
 
 
 def on_message(client, userdata, msg):
-    global last_speicherladepumpe
+    global last_speicherladepumpe, last_fault_raw
     topic = str(msg.topic)
     payload = msg.payload.decode(errors="replace").strip()
 
@@ -2673,7 +2716,12 @@ def on_message(client, userdata, msg):
         publish_active_states(client)
         return
 
+    if topic == RELAY_STATUS_TOPIC:
+        publish_collective_fault_state(client, payload)
+        return
+
     if topic == FAULT_RAW_TOPIC:
+        last_fault_raw = payload
         publish_fault_state(client, payload)
         return
 

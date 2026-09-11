@@ -1,5 +1,5 @@
 alias: Vitodens - Neue Stoerung aufs Handy
-description: Meldet einen neuen Fehlercode mit Klartext und Anlagenzeit.
+description: Meldet eine aktive Sammelstoerung sofort und ergaenzt bekannte Fehlerdetails.
 triggers:
   - trigger: state
     entity_id: sensor.vitodens_stoerung_aktuell
@@ -12,12 +12,12 @@ actions:
     data:
       title: Stoerung an der Vitodens
       message: >-
-        Code {{ state_attr('sensor.vitodens_stoerung_aktuell', 'code') }}:
+        Code {{ state_attr('sensor.vitodens_stoerung_aktuell', 'code') or '--' }}:
         {{ state_attr('sensor.vitodens_stoerung_aktuell', 'beschreibung') }}
-        Zeitpunkt der Heizung:
-        {{ state_attr('sensor.vitodens_stoerung_aktuell', 'zeitpunkt') }}
+        {% if state_attr('sensor.vitodens_stoerung_aktuell', 'zeitpunkt') %}
+        Zeitpunkt der Heizung: {{ state_attr('sensor.vitodens_stoerung_aktuell', 'zeitpunkt') }}
+        {% endif %}
       data:
         url: /vitodens-lokal/kontrolle
 mode: queued
 max: 10
-

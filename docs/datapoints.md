@@ -24,9 +24,9 @@ werden.
 | HK1-Zeitprogramm Montag | `0x2000` | 8 | vier Zeitfenster |
 | Warmwasser Montag | `0x2100` | 8 | vier Zeitfenster |
 | Zirkulation Montag | `0x2200` | 8 | vier Zeitfenster |
+| Sammelstörung | `0xA152` | 2 | Byte 0, Bit `0x01` |
 | Fehlerhistorie, neuester Eintrag | `0x7507` | 9 | Code und Zeitstempel |
 
 Die folgenden Wochentage liegen jeweils im Abstand von acht Byte. Dadurch
 reichen die Bereiche `0x2000` bis `0x2030`, `0x2100` bis `0x2130` und `0x2200`
 bis `0x2230` von Montag bis Sonntag.
-

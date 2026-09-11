@@ -36,11 +36,17 @@ Zeitprogramm-Ansicht schreibt es auf ausgewählte Tage der Heizung.
 
 ## Fehlermeldungen
 
-Der erste Eintrag der Viessmann-Fehlerhistorie wird zyklisch gelesen. Der
-neun Byte lange Datensatz enthält Fehlercode und Anlagenzeit. Ein neuer
+Die Störungserkennung arbeitet zweistufig. Das Sammelstörungsbit im
+Relaisstatus `0xA152` meldet eine aktive Störung unmittelbar. Dadurch kann Home
+Assistant sofort eine Push-Nachricht senden, auch wenn die Fehlerhistorie noch
+keinen neuen Eintrag enthält.
+
+Der erste Eintrag der Viessmann-Fehlerhistorie an `0x7507` wird zusätzlich
+zyklisch gelesen. Der neun Byte lange Datensatz enthält Fehlercode und
+Anlagenzeit. Sobald dieser Eintrag aktualisiert wurde, ersetzt der Dienst den
+allgemeinen Störungstext durch Code, Klartext und Zeitstempel. Ein neuer
 Zeitstempel erzeugt auch bei identischem Fehlercode ein neues Ereignis.
 
 Code `00` bedeutet keine Störung und löst keine Push-Nachricht aus. Unbekannte
 Codes werden mit ihrem Hex-Code angezeigt, damit sie anhand der Serviceunterlage
 des konkreten Geräts geprüft werden können.
-
