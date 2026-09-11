@@ -8,6 +8,8 @@ Lokale Viessmann-Heizungssteuerung mit Home Assistant, MQTT, Optolink,
 Vitoconnect und grafischen Lovelace-Karten. Ausgelegt für die Vitodens 300-W
 B3HB mit der Gerätekategorie `VScotHO1_72` und dem VS2/P300-Protokoll.
 
+![Lokale Vitodens-Steuerung in Home Assistant](docs/images/dashboard-control.png)
+
 ## Besonderheiten
 
 ### Zeitprofile statt täglicher Einzelprogrammierung
@@ -18,17 +20,18 @@ anschließend mit einem Klick einem beliebigen Wochentag zugewiesen werden. Die
 grafische 24-Stunden-Ansicht zeigt direkt, welches Profil und welche Zeitfenster
 in der Heizung aktiv sind.
 
+| Heizkreis-Wochenplan | Warmwasser-Wochenplan |
+| --- | --- |
+| ![Heizkreis-Zeitprogramm mit Tagesprofilen](docs/images/schedule-heating.png) | ![Warmwasser-Zeitprogramm mit Tagesprofilen](docs/images/schedule-hot-water.png) |
+
+![Editor für Werktag- und Ruhetagprofile](docs/images/profile-editor.png)
+
 ### Warmwasser-Schnellstart mit Rückkehr zum Zeitprogramm
 
 Die Warmwasserbereitung kann außerhalb des regulären Zeitprogramms für 30 oder
 60 Minuten gestartet werden. Danach stellt der Dienst das zuvor gesicherte
 Zeitprogramm wieder her. Home Assistant zeigt dabei getrennt an, ob gerade ein
 Warmwasser-Zeitfenster gilt und ob die Speicherladung tatsächlich aktiv ist.
-
-## Dashboard
-
-Die Bedienoberfläche umfasst eine kompakte Anlagensteuerung, eine grafische
-Heizkennlinie, Livewerte, Wochenübersichten und einen eigenen Profileditor.
 
 Das Projekt ergänzt den Splitter um:
 
