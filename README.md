@@ -29,8 +29,6 @@ Warmwasser-Zeitfenster gilt und ob die Speicherladung tatsächlich aktiv ist.
 
 Die Bedienoberfläche umfasst eine kompakte Anlagensteuerung, eine grafische
 Heizkennlinie, Livewerte, Wochenübersichten und einen eigenen Profileditor.
-Aktuelle, anonymisierte Screenshots werden in
-[docs/screenshots.md](docs/screenshots.md) ergänzt.
 
 Das Projekt ergänzt den Splitter um:
 
@@ -128,7 +126,6 @@ Hand einer Fachkraft.
 - [Bedienkonzept](docs/operation.md)
 - [Datenpunkte](docs/datapoints.md)
 - [Backup und Wiederherstellung](docs/backup.md)
-- [Screenshots](docs/screenshots.md)
 
 ## Lizenz und Herkunft
 
