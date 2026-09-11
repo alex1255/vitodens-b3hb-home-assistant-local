@@ -1,0 +1,105 @@
+views:
+  - title: Kontrolle
+    path: kontrolle
+    type: sections
+    icon: mdi:water-boiler
+    max_columns: 3
+    badges:
+      - type: entity
+        entity: sensor.vitodens_systemzeit_heizung
+        name: Systemzeit Heizung
+        show_name: true
+        show_state: true
+        show_icon: true
+      - type: entity
+        entity: select.vitodens_betriebsart
+        show_state: true
+      - type: entity
+        entity: binary_sensor.vitodens_ww_erzeugung_aktiv
+        show_state: true
+      - type: entity
+        entity: sensor.vitodens_speichertemperatur
+        show_state: true
+    sections:
+      - type: grid
+        column_span: 3
+        cards:
+          - type: heading
+            heading: Warmwasser schnell starten
+            heading_style: title
+            icon: mdi:water-plus
+          - type: tile
+            entity: button.vitodens_ww_jetzt_30_min
+            name: 30 Minuten
+            grid_options: {columns: 4, rows: 2}
+          - type: tile
+            entity: button.vitodens_ww_jetzt_60_min
+            name: 60 Minuten
+            grid_options: {columns: 4, rows: 2}
+          - type: tile
+            entity: button.vitodens_ww_zeitprogramm_wiederherstellen
+            name: Warmwasser-Zeitprogramm wiederherstellen
+            grid_options: {columns: 4, rows: 2}
+      - type: grid
+        column_span: 2
+        cards:
+          - type: custom:vitodens-heating-control-card
+            title: HK1 Regler
+            grid_options: {columns: full, rows: auto}
+          - type: custom:vitodens-heating-control-card
+            variant: curve
+            title: Heizkennlinie
+            grid_options: {columns: full, rows: auto}
+      - type: grid
+        cards:
+          - type: heading
+            heading: Livewerte
+            heading_style: title
+            icon: mdi:gauge
+          - type: tile
+            entity: sensor.vitodens_aussentemperatur
+            name: Aussen
+            grid_options: {columns: 6, rows: auto}
+          - type: tile
+            entity: sensor.vitodens_kesseltemperatur
+            name: Kessel
+            grid_options: {columns: 6, rows: auto}
+          - type: tile
+            entity: sensor.vitodens_speichertemperatur
+            name: Speicher
+            grid_options: {columns: 6, rows: auto}
+          - type: tile
+            entity: sensor.vitodens_brenner_modulation
+            name: Brenner
+            grid_options: {columns: 6, rows: auto}
+          - type: tile
+            entity: sensor.vitodens_stoerung_aktuell
+            name: Letzte Stoerung
+            grid_options: {columns: 12, rows: auto}
+  - title: Zeitprogramme
+    path: zeitprogramme
+    type: sections
+    icon: mdi:chart-timeline-variant
+    max_columns: 1
+    sections:
+      - type: grid
+        cards:
+          - type: custom:vitodens-schedule-bars-card
+            title: Zeitprogramme
+            editorPath: /vitodens-lokal/zeitplan-editor
+            programs: [hk1, ww, zirkulation]
+            grid_options: {columns: 12, rows: auto}
+  - title: Profile
+    path: zeitplan-editor
+    type: sections
+    icon: mdi:bookmark-box-multiple
+    max_columns: 2
+    sections:
+      - type: grid
+        column_span: 2
+        cards:
+          - type: custom:vitodens-profile-editor-card
+            title: Profile bearbeiten
+            overviewPath: /vitodens-lokal/zeitprogramme
+            grid_options: {columns: full, rows: auto}
+

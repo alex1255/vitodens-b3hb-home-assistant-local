@@ -1,0 +1,13 @@
+__pycache__/
+*.py[cod]
+*.log
+*.tar
+*.tar.gz
+backups/
+settings_ini.py
+poll_list.py
+ww_action_state.json
+schedule_editor_state.json
+.DS_Store
+.env
+

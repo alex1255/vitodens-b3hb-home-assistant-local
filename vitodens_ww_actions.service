@@ -1,0 +1,19 @@
+[Unit]
+Description=Vitodens dedicated hot-water MQTT actions
+After=network-online.target optolinkvs2_switch.service
+Wants=network-online.target
+Requires=optolinkvs2_switch.service
+
+[Service]
+Type=simple
+User=optolink
+Group=optolink
+WorkingDirectory=/home/optolink/optolink-splitter
+ExecStart=/usr/bin/python3 /home/optolink/optolink-splitter/vitodens_ww_actions.py
+Restart=on-failure
+RestartSec=10
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target
