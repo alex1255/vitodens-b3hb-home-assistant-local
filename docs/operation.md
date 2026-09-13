@@ -16,6 +16,12 @@ Die temporäre Warmwasserfreigabe erweitert das aktuelle Zeitfenster. Der
 vorherige Wochenplan wird gesichert und nach Ablauf wiederhergestellt. Der
 Wiederherstellen-Button kann dies vorzeitig auslösen.
 
+Der Button beendet keine bereits laufende Speicherladung hart. **WW Erzeugung**
+zeigt den Zustand der Speicherladepumpe und ist damit aussagekräftiger als die
+Betriebsart. **Letzte Aktion** meldet Annahme, Fehler oder Bestätigung eines
+Schreibbefehls. Manche regelmäßig gelesenen Werte erscheinen erst beim nächsten
+Polling aktualisiert.
+
 ## Zeitprogramme
 
 Die zweite Ansicht zeigt HK1, Warmwasser und Zirkulation als Tagesbalken. Pro
@@ -33,6 +39,10 @@ Die dritte Ansicht bearbeitet ausschließlich die Profile `Schaukelstuhl` und
 
 Ein Profil ist zunächst nur lokal gespeichert. Erst die Anwendung in der
 Zeitprogramm-Ansicht schreibt es auf ausgewählte Tage der Heizung.
+
+Die Profile gelten getrennt für HK1, Warmwasser und Zirkulation. Das gleichnamige
+Profil kann deshalb in jedem der drei Programme andere Zeitfenster enthalten.
+Jedes Tagesprogramm unterstützt maximal vier Fenster in Zehn-Minuten-Schritten.
 
 ## Fehlermeldungen
 
@@ -56,3 +66,6 @@ Eine Quittierung kann das Sammelstörungsbit löschen, obwohl das Warndreieck am
 Regler noch sichtbar ist. Quittiert ist deshalb nicht gleichbedeutend mit
 behoben; maßgeblich bleibt die Anzeige am Gerät, bis ein belastbarer Datenpunkt
 für diesen gespeicherten Anzeigezustand identifiziert ist.
+
+Die Einrichtung der Push-Mitteilung ist unter
+[Störungsmeldungen auf das Handy](notifications.md) beschrieben.

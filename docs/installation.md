@@ -19,6 +19,18 @@ den parallelen Betrieb mit Vitoconnect sind gekreuzte RX/TX-Leitungen und ein
 3,3-V-UART erforderlich. Auf Raspberry Pi 3 und neuer sollte in der Regel
 `/dev/ttyAMA0` statt `/dev/ttyS0` verwendet werden.
 
+Getestete UART-Verdrahtung am 40-Pin-Header:
+
+| Raspberry Pi | Physischer Pin | USB-TTL-Adapter |
+| --- | ---: | --- |
+| GND | 6 | GND |
+| GPIO14 / UART0 TX | 8 | RX |
+| GPIO15 / UART0 RX | 10 | TX |
+
+Die VCC-Leitung bleibt frei. Vor dem Anschluss sicherstellen, dass der Adapter
+mit 3,3-V-Logik arbeitet. Die Pinbelegung des konkreten Raspberry-Modells und
+Adapters anhand deren Dokumentation nochmals prüfen.
+
 Für den Optolink-USB-Adapter einen stabilen Pfad aus `/dev/serial/by-id/`
 verwenden. Gerätenamen wie `/dev/ttyUSB0` können sich nach einem Neustart ändern.
 
@@ -30,6 +42,12 @@ Dieses Repository zusätzlich zum bereits eingerichteten Splitter klonen:
 git clone https://github.com/alex1255/vitodens-b3hb-home-assistant-local.git
 cd vitodens-b3hb-home-assistant-local
 EXTENSION_DIR="$PWD"
+```
+
+Python-Abhängigkeit der Erweiterung installieren:
+
+```bash
+python3 -m pip install -r "$EXTENSION_DIR/requirements.txt"
 ```
 
 Installationsverzeichnis und Dienstbenutzer an die eigene Splitter-Installation
@@ -61,10 +79,20 @@ Der Zusatzdienst verwendet aus der Splitter-Konfiguration mindestens:
 
 | Einstellung | Bedeutung |
 | --- | --- |
+| `port_optolink` | stabiler Gerätepfad des USB-Optolink-Adapters |
+| `port_vitoconnect` | Raspberry-UART für Vitoconnect, im getesteten Aufbau `/dev/ttyAMA0` |
 | `mqtt_broker` | MQTT-Broker im Format `host:port` |
 | `mqtt_user` | optional im Format `benutzer:passwort` |
 | `mqtt_topic` | gemeinsames Topic-Präfix, beispielsweise `vitodens` |
+| `mqtt_listen` | MQTT-Empfang des Splitters aktivieren |
+| `mqtt_respond` | MQTT-Ausgabe des Splitters aktivieren |
 | `tcpip_port` | lokaler TCP-Port des laufenden Splitters |
+
+Zusätzlich muss der primäre UART in der Boot-Konfiguration aktiviert und die
+serielle Linux-Konsole auf diesem Port deaktiviert sein. Nach jeder Änderung der
+Boot-Konfiguration neu starten und mit `ls -l /dev/ttyAMA0` prüfen. Die konkrete
+Datei ist abhängig von der Raspberry-Pi-OS-Version (`/boot/config.txt` oder
+`/boot/firmware/config.txt`).
 
 Der TCP-Server und die Home-Assistant-/MQTT-Ausgabe des Splitters müssen aktiv
 sein. Zugangsdaten gehören ausschließlich in die lokale `settings_ini.py` und
@@ -111,6 +139,11 @@ Ein erfolgreicher Start enthält keine dauerhafte Python-Ausnahme und meldet den
 Dienst als `active (running)`. Nach einem Neustart müssen beide Units weiterhin
 `enabled` und `active` sein.
 
+Für den parallelen ViCare-Betrieb zuerst Raspberry und Splitter vollständig
+starten lassen. Anschließend Vitoconnect mit dem USB-TTL-Anschluss verbinden
+beziehungsweise versorgen. Die Power-LED bestätigt nur die Versorgung; RX/TX-
+Aktivität und eine wieder erreichbare ViCare-App bestätigen die Kommunikation.
+
 ## 4. Home-Assistant-Karten
 
 Die drei JavaScript-Dateien aus diesem Repository nach `/config/www/` der
@@ -151,6 +184,10 @@ Die Anwendung schreibt niemals automatisch eine Heizkennlinie. Profil- und
 Zeitprogrammänderungen werden nur nach einer ausdrücklichen Bedienaktion
 ausgeführt.
 
+Zum Abschluss den Raspberry einmal kontrolliert neu starten und danach Dienste,
+MQTT-Entitäten, ViCare-Verbindung und Lesewerte erneut prüfen. Die ausführliche
+Diagnose steht unter [Fehlersuche und Wartung](troubleshooting.md).
+
 ## Aktualisierung
 
 ```bash
@@ -159,7 +196,9 @@ git pull --ff-only
 ```
 
 Anschließend die beiden Python-Dateien und gegebenenfalls geänderte
-JavaScript-Karten erneut an ihre Zielorte kopieren. Danach:
+JavaScript-Karten erneut an ihre Zielorte kopieren. Falls die Backup-Dateien
+geändert wurden, auch Skripte und Units nach der Anleitung in
+[Backup und Wiederherstellung](backup.md) aktualisieren. Danach:
 
 ```bash
 sudo systemctl restart vitodens_ww_actions.service
@@ -168,3 +207,8 @@ sudo systemctl restart vitodens_ww_actions.service
 Bei Änderungen an der systemd-Unit zusätzlich `sudo systemctl daemon-reload`
 ausführen. Browser und Home-Assistant-App benötigen nach einem Update der
 JavaScript-Karten möglicherweise einen vollständig geleerten Frontend-Cache.
+
+Vor einem größeren Update ein manuelles Home-Assistant-Backup erzeugen. Für ein
+Rollback den vorherigen Git-Commit auschecken, die Dateien erneut installieren
+und die Dienste neu starten. Produktive `settings_ini.py` und JSON-Zustandsdateien
+dabei nicht durch Repository-Dateien ersetzen.

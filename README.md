@@ -108,6 +108,10 @@ Andere Viessmann-Geräte können abweichende Datenpunktadressen, Wertebereiche
 oder Betriebsartcodes verwenden. Schreibzugriffe dürfen erst nach dem Vergleich
 mit der Serviceunterlage des konkreten Geräts aktiviert werden.
 
+Der dokumentierte Referenzstand wurde am 11. September 2026 auf der oben
+genannten Anlage einschließlich Neustart, parallelem ViCare-Betrieb,
+Zeitprogramm-Schreibtest, Störungserkennung und Backup-Übertragung geprüft.
+
 ## Aufbau
 
 ```text
@@ -140,7 +144,7 @@ Schreibvorgänge und die Profilverwaltung.
    über die Home-Assistant-Oberfläche anlegen.
 8. Optional die Push-Automation aus
    [examples/fault-notification-automation.yaml](examples/fault-notification-automation.yaml)
-   importieren und den Benachrichtigungsdienst anpassen.
+   nach der [Anleitung für Störungsmeldungen](docs/notifications.md) einrichten.
 9. Optional das automatische Raspberry-Backup nach
    [docs/backup.md](docs/backup.md) einrichten.
 
@@ -180,8 +184,12 @@ Hand einer Fachkraft.
 
 - [Installation](docs/installation.md)
 - [Bedienkonzept](docs/operation.md)
+- [Architektur und Betriebsdaten](docs/architecture.md)
 - [Datenpunkte](docs/datapoints.md)
+- [Störungsmeldungen auf das Handy](docs/notifications.md)
 - [Backup und Wiederherstellung](docs/backup.md)
+- [Fehlersuche und Wartung](docs/troubleshooting.md)
+- [Offene Punkte](ROADMAP.md)
 
 ## Lizenz und Herkunft
 

@@ -1,7 +1,7 @@
 # Roadmap
 
-- Automatisiertes Raspberry-Backup auf ein NAS einrichten und die
-  Wiederherstellung auf einer Ersatz-SD-Karte testen.
+- Wiederherstellung des automatischen Raspberry-Backups auf einer Ersatz-SD-
+  Karte praktisch testen.
 - Betriebsarten, Sparbetrieb, Partybetrieb und Solltemperaturen bei passender
   Außentemperatur kontrolliert testen.
 - Zeitprogrammprofile im Alltag weiter testen und die Oberfläche bei Bedarf
@@ -11,4 +11,3 @@
   ausschließlich die Home-Assistant-Ansicht benötigt wird.
 - Optional einen transparenten Heizkennlinien-Assistenten entwickeln, der nur
   begründete Vorschläge erzeugt und niemals selbstständig Werte schreibt.
-
