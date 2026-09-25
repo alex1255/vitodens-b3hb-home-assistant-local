@@ -4,6 +4,9 @@ const VHC_DEFAULTS = {
   partyEntity: "switch.vitodens_partybetrieb_dauerhaft",
   wwActiveEntity: "binary_sensor.vitodens_ww_erzeugung_aktiv",
   hk1WindowEntity: "binary_sensor.vitodens_hk1_zeitfenster_aktiv",
+  reducedTempEntity: "number.vitodens_hk1_reduzierte_temperatur_soll",
+  normalTempEntity: "number.vitodens_hk1_normaltemperatur_soll",
+  comfortTempEntity: "number.vitodens_hk1_komforttemperatur_soll",
   boilerTempEntity: "sensor.vitodens_kesseltemperatur",
   outsideTempEntity: "sensor.vitodens_aussentemperatur",
   storeTempEntity: "sensor.vitodens_speichertemperatur",
@@ -110,6 +113,52 @@ class VitodensHeatingControlCard extends HTMLElement {
     `;
   }
 
+  heatingSetpointChip() {
+    const heatingActive = this.state(this.config.modeEntity) === "Heizen und Warmwasser";
+    if (!heatingActive) {
+      return `
+        <div class="chip readonly heating-state inactive">
+          <ha-icon icon="mdi:radiator-off"></ha-icon>
+          <span>HK1 nicht aktiv</span>
+          <b>-</b>
+        </div>
+      `;
+    }
+
+    const partyActive = this.state(this.config.partyEntity) === "on";
+    const sparActive = this.state(this.config.sparEntity) === "on";
+    const normalActive = this.state(this.config.hk1WindowEntity) === "on";
+    let label;
+    let entity;
+    let icon;
+    let style;
+
+    if (partyActive) {
+      label = "Komfort aktiv";
+      entity = this.config.comfortTempEntity;
+      icon = "mdi:sofa";
+      style = "comfort";
+    } else if (sparActive || !normalActive) {
+      label = "Reduziert aktiv";
+      entity = this.config.reducedTempEntity;
+      icon = "mdi:weather-night";
+      style = "reduced";
+    } else {
+      label = "Normal aktiv";
+      entity = this.config.normalTempEntity;
+      icon = "mdi:white-balance-sunny";
+      style = "normal";
+    }
+
+    return `
+      <div class="chip readonly heating-state ${style}">
+        <ha-icon icon="${icon}"></ha-icon>
+        <span>${label}</span>
+        <b>${this.temp(entity)}</b>
+      </div>
+    `;
+  }
+
   temperatureRows() {
     return this.config.temperatures.map(([label, entity, icon]) => `
       <div class="temp-row">
@@ -196,7 +245,7 @@ class VitodensHeatingControlCard extends HTMLElement {
           <div class="chips">
             ${this.statusChip("Sparbetrieb", this.config.sparEntity, "mdi:weather-night")}
             ${this.statusChip("Partybetrieb", this.config.partyEntity, "mdi:white-balance-sunny")}
-            ${this.readOnlyChip("HK1 Zeitfenster", this.config.hk1WindowEntity, "mdi:calendar-check")}
+            ${this.heatingSetpointChip()}
             ${this.readOnlyChip("WW Erzeugung", this.config.wwActiveEntity, "mdi:water-sync")}
           </div>
           <div class="live">
@@ -288,6 +337,12 @@ class VitodensHeatingControlCard extends HTMLElement {
         .chip b { font-size: 12px; color: var(--secondary-text-color); }
         .chip.on { border-color: var(--vhc-green); }
         .chip.on ha-icon, .chip.on b { color: var(--vhc-green); }
+        .heating-state.normal { border-color: var(--vhc-orange); }
+        .heating-state.normal ha-icon, .heating-state.normal b { color: var(--vhc-orange); }
+        .heating-state.reduced { border-color: var(--vhc-blue); }
+        .heating-state.reduced ha-icon, .heating-state.reduced b { color: var(--vhc-blue); }
+        .heating-state.comfort { border-color: var(--vhc-green); }
+        .heating-state.comfort ha-icon, .heating-state.comfort b { color: var(--vhc-green); }
         .live {
           display: grid;
           grid-template-columns: repeat(3, minmax(0, 1fr));

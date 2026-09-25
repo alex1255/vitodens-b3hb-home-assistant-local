@@ -12,6 +12,13 @@ Die erste Ansicht bündelt häufige Aktionen und Livewerte:
 - Heizkennlinie mit Neigung und Niveau
 - Anlagenzeit und aktuelle Betriebswerte
 
+Der HK1-Status zeigt nicht nur das aktive Zeitfenster, sondern den daraus
+resultierenden Sollwert direkt an: **Normal aktiv** mit Normaltemperatur oder
+**Reduziert aktiv** mit reduzierter Temperatur. Dauerhafter Sparbetrieb und
+Partybetrieb werden als **Reduziert aktiv** beziehungsweise **Komfort aktiv**
+mit ihrem jeweiligen Sollwert dargestellt. Ist die Betriebsart ohne Heizen,
+erscheint **HK1 nicht aktiv**.
+
 Die temporäre Warmwasserfreigabe erweitert das aktuelle Zeitfenster. Der
 vorherige Wochenplan wird gesichert und nach Ablauf wiederhergestellt. Der
 Wiederherstellen-Button kann dies vorzeitig auslösen.
