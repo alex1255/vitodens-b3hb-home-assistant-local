@@ -98,6 +98,21 @@ Der TCP-Server und die Home-Assistant-/MQTT-Ausgabe des Splitters müssen aktiv
 sein. Zugangsdaten gehören ausschließlich in die lokale `settings_ini.py` und
 nicht in dieses Repository.
 
+## Rundes GC9A01-Display
+
+Der optionale Displaydienst liegt getrennt vom Optolink-Splitter unter
+`/opt/vitodens-display`. Er liest die Heizungszustände aus MQTT und HK1-Vor- und
+Rücklauf direkt über die verschlüsselte ESPHome Native API. Er verwendet einen
+eigenen Python-Virtualenv und den separaten Dienst `vitodens-display.service`.
+
+SPI wird über `raspi-config` aktiviert. Vor Änderungen an
+`/boot/firmware/config.txt` eine lokale Sicherung anlegen und nach der Änderung
+neu starten. Die sieben Displayleitungen sind in
+[`../display/README.md`](../display/README.md) dokumentiert. Zugangsdaten kommen
+nur in `/etc/default/vitodens-display` mit Dateirechten `0600`. Den Dienst erst
+nach angeschlossenem Display mit `systemctl enable --now vitodens-display`
+aktivieren. Er benötigt die Gruppen `spi` und `gpio` für den Dienstbenutzer.
+
 Syntax prüfen:
 
 ```bash

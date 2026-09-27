@@ -1,0 +1,20 @@
+[Unit]
+Description=Vitodens round status display
+After=network-online.target
+Wants=network-online.target
+
+[Service]
+Type=simple
+User=optolink
+Group=optolink
+SupplementaryGroups=spi gpio
+WorkingDirectory=/opt/vitodens-display/app
+EnvironmentFile=/etc/default/vitodens-display
+ExecStart=/opt/vitodens-display/.venv/bin/python /opt/vitodens-display/app/vitodens_display.py
+Restart=on-failure
+RestartSec=5
+StandardOutput=journal
+StandardError=journal
+
+[Install]
+WantedBy=multi-user.target

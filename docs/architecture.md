@@ -10,6 +10,8 @@
 | `vitodens_ww_actions.py` | Raspberry Pi | Zusatzlogik, Profile, geprüfte Schreibaktionen und MQTT Discovery |
 | Vitoconnect | Heizraum | ViCare-/Cloud-Zugang über den zweiten Splitter-Anschluss |
 | MQTT-Broker | Home Assistant | Zustände und Befehle zwischen Raspberry und Home Assistant |
+| `vitodens-display.service` | Raspberry Pi | Read-only-Anzeige für Temperaturen und Betriebszustände auf GC9A01 |
+| ESPHome `hk1-temperature` | Heizkreis 1 | Externe Messung von HK1-Vorlauf und HK1-Rücklauf |
 | drei JavaScript-Karten | Home Assistant `/config/www` | Bedienung, Zeitbalken und Profileditor |
 
 Home Assistant spricht nicht direkt mit der seriellen Heizung. Die Karten bedienen
@@ -27,7 +29,17 @@ Vitodens <-> USB-Optolink <-> optolink-splitter <-> MQTT <-> Home Assistant
                          vitodens_ww_actions.py
                                   |
                     UART <-> USB-TTL <-> Vitoconnect
+
+ESPHome HK1-Temperaturfühler -- verschlüsselte Native API --> Displaydienst
+MQTT Heizungszustände ---------------------------------------> Displaydienst
+Displaydienst -- SPI0/GPIO ----------------------------------> GC9A01
 ```
+
+Der Displaydienst liest MQTT-Zustände und die beiden HK1-Temperaturen direkt
+vom verschlüsselten ESPHome-Gerät. Er sendet keine MQTT-Befehle und greift
+nicht auf die serielle Optolink-Schnittstelle zu. Ausbleibende MQTT-, Optolink-
+oder ESPHome-Daten führen zu einer eigenen Kommunikationswarnung auf dem
+Display. Zugangsdaten liegen geschützt in `/etc/default/vitodens-display`.
 
 `homeassistant_poll_list.py` enthält ausschließlich Lesedatenpunkte. Schreibbare
 Entitäten werden bewusst nur durch `vitodens_ww_actions.py` angelegt. Der Dienst
@@ -61,6 +73,9 @@ läuft.
 4. MQTT Discovery legt die Entitäten in Home Assistant an beziehungsweise
    aktualisiert sie.
 5. `optolink-backup.timer` läuft unabhängig einmal täglich.
+6. `vitodens-display.service` startet unabhängig vom Splitter, damit er auch
+   dessen Ausfall anzeigen kann. Er benötigt Netzwerk, MQTT, SPI/GPIO und die
+   ESPHome-Verbindung.
 
 Der MQTT-Verfügbarkeitsstatus des Zusatzdienstes liegt unter
 `<mqtt_topic>/action/LWT`. Bei einem geregelten Stopp wird `offline` gesendet;
