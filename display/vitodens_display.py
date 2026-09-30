@@ -35,6 +35,7 @@ TOPICS = {
     "mode": f"{TOPIC_BASE}/action/betriebsart/state",
     "heating_window": f"{TOPIC_BASE}/hk1_zeitfenster_aktiv",
     "hot_water_active": f"{TOPIC_BASE}/ww_erzeugung_aktiv",
+    "storage_target": f"{TOPIC_BASE}/speichertemperatur_soll_aktuell",
     "fault_active": f"{TOPIC_BASE}/stoerung_aktiv",
     "fault_text": f"{TOPIC_BASE}/stoerung_aktuell",
 }
@@ -287,9 +288,18 @@ def render_main(phase, view, values):
         outline="#263740",
         width=2 * SCALE,
     )
-    if hot_water:
-        status = "LÄDT" if values.get("hot_water_active", "OFF").upper() == "ON" else "BEREIT"
-        centered(draw, 165, status, font(25, True), "#8cf1e8")
+    if values.get("hot_water_active", "OFF").upper() == "ON":
+        target = number(values.get("storage_target"))
+        target_text = "--°" if target is None else f"{round(target)}°"
+        if hot_water:
+            centered(draw, 165, f"LÄDT BIS {target_text}", font(17, True), "#8cf1e8")
+        else:
+            storage = number(values.get("storage"))
+            storage_text = "--°" if storage is None else f"{round(storage)}°"
+            centered(draw, 158, "WW LÄDT", font(13, True), "#8cf1e8")
+            centered(draw, 177, f"{storage_text} → {target_text}", font(16, True), "#f8fafc")
+    elif hot_water:
+        centered(draw, 165, "BEREIT", font(25, True), "#8cf1e8")
     else:
         return_temp = number(values.get("return"))
         return_text = "--°" if return_temp is None else f"{round(return_temp)}°"
